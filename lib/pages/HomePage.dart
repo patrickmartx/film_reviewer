@@ -1,5 +1,10 @@
-import 'package:film_reviewer/model/entity/movie.dart';
+import 'dart:ffi';
+
+import 'package:film_reviewer/model/dummy/MovieListDummy.dart';
+import 'package:film_reviewer/model/entity/Movie.dart';
 import 'package:film_reviewer/utils/SearchBox.dart';
+import 'package:film_reviewer/utils/MovieCard.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -12,27 +17,9 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  String searchedFilm = '';
   String pageName = 'Filmes';
-  
-  static List<Movie> moviesList = [
-
-    Movie(
-        posterUrl:
-            "https://www.themoviedb.org/t/p/w600_and_h900_bestv2/sMp34cNKjIb18UBOCoAv4DpCxwY.jpg",
-        rating: 73.0,
-        title: "Donzela",
-        originalTitle: "Damsel",
-        releaseYear: 2024,
-        duration: 1.50,
-        genres: ["Fantasia", "Aventura", "Ação"],
-        description:
-            "O casamento de uma jovem com um príncipe encantado se transforma em uma luta por sobrevivência quando ela é oferecida em sacrifício a um dragão que cospe fogo.",
-        budget: 60000000.00,
-        producer: "Netflix",
-        directos: ["Juan Carlos Fresnadillo"],
-        cast: ["Millie Bobby Brown", "Ray Winstone", "Angela Bassett", "Brooke Carter"]
-        ),
-  ];
+  List<Movie> moviesList = List.from(MovieListDummy.moviesList);
 
   @override
   Widget build(BuildContext context) {
@@ -45,39 +32,77 @@ class _HomePageState extends State<HomePage> {
             fontWeight: FontWeight.w600,
             fontSize: 18.0,
             height: 1.22,
-            color: Color.fromRGBO(52, 58, 64, 1),
+            color: const Color.fromRGBO(52, 58, 64, 1),
             //rgba(52, 58, 64, 1)
           ),
         ),
       ),
-      body: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            SizedBox(
-              height: 20.0,
-            ),
-
-            Container(
-              child: SearchBox(),
-            ),
-            SizedBox(
-              height: 20.0,
-            ),
-            Row(),
-            Expanded(
+      body: SingleChildScrollView(
+        child: Container(
+          padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
+          child: Column(
+            children: [
+              SearchBox(onChanged: (text) {
+                setState(() {
+                  searchedFilm = text;
+                });
+              }),
+              const Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Padding(padding: EdgeInsets.fromLTRB(0, 50, 0, 0)),
+                  genreBox(title: "Ação"),
+                  genreBox(title: "Aventura"),
+                  genreBox(title: "Fantasia"),
+                  genreBox(title: "Comédia")
+                ],
+              ),
+              Container(
+                height: MediaQuery.of(context).size.height,
+                width: MediaQuery.of(context).size.width,
                 child: ListView.builder(
-                    itemCount: moviesList.length,
-                    itemBuilder: (context, index) => ListTile(
-                          title: Text(moviesList[index].title),
-                        ))),
-            // Container(
-            //   child: SearchBar(
-            //     leading: Icon(Icons.search),
-            //     hintText: 'Pesquise filmes',
-            //   ),
-            // )
-          ]),
+                  itemCount: moviesList.length,
+                  itemBuilder: (context, index) => Padding(
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 10),
+                    child: MovieCard(movie: moviesList.elementAt(index)),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class genreBox extends StatelessWidget {
+  const genreBox({super.key, required this.title});
+
+  final String title;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 79.0,
+      height: 24.0,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        border: Border.all(
+          color: Color.fromRGBO(241, 243, 245, 1),
+          width: 1.0,
+        ),
+        borderRadius: BorderRadius.circular(10.0),
+      ),
+      child: Text(
+        title,
+        style: GoogleFonts.montserrat(
+          fontWeight: FontWeight.w400,
+          color: Color.fromRGBO(0, 56, 76, 1),
+          fontSize: 12.0,
+        ),
+      ),
     );
   }
 }
