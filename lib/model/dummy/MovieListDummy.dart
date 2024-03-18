@@ -26,7 +26,7 @@ class MovieListDummy {
     Movie(
       posterUrl:
           "https://www.themoviedb.org/t/p/w600_and_h900_bestv2/d5NXSklXo0qyIYkgV94XAgMIckC.jpg",
-      rating: 7.8,
+      rating: 70.8,
       title: "Duna",
       originalTitle: "Dune",
       releaseYear: 2021,
@@ -47,7 +47,7 @@ class MovieListDummy {
     Movie(
     posterUrl:
         "https://www.themoviedb.org/t/p/w600_and_h900_bestv2/74xTEgt7R36Fpooo50r9T25onhq.jpg",
-    rating: 7.9,
+    rating: 70.9,
     title: "Batman",
     originalTitle: "The Batman",
     releaseYear: 2022,
