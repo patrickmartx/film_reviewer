@@ -1,23 +1,26 @@
-import 'package:film_reviewer/model/entity/Movie.dart';
-import 'package:film_reviewer/pages/MovieDetails.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:film_reviewer/src/data/http/HttpClient.dart';
+import 'package:film_reviewer/src/data/http/Routes.dart';
+import 'package:film_reviewer/src/data/model/entity/Genre.dart';
+import 'package:film_reviewer/src/data/model/entity/MovieHomeDTO.dart';
+import 'package:film_reviewer/src/data/repositories/MovieRepository.dart';
+import 'package:film_reviewer/src/pages/MovieDetails.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class MovieCardButtom extends StatelessWidget {
   const MovieCardButtom({super.key, required this.movie});
-  final Movie movie;
+  final MovieHomeDTO movie;
 
   @override
   Widget build(BuildContext context) {
+    MovieRepository repository = MovieRepositoryImpl(client: HttpClientImpl());
     return GestureDetector(
       onTap: () {
         Navigator.push(
           context,
           MaterialPageRoute(
             builder: (context) => MovieDetails(
-              movie: movie,
+              id: movie.id,
             ),
           ),
         );
@@ -40,7 +43,7 @@ class MovieCardButtom extends StatelessWidget {
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(10.0),
                   child: Image.network(
-                    movie.posterUrl,
+                    Routes().routePoster(movie.posterPath),
                     fit: BoxFit.fill,
                   ),
                 ),
@@ -77,21 +80,37 @@ class MovieCardButtom extends StatelessWidget {
                           ),
                         ),
                         const SizedBox(height: 10.0),
-                        Row(
-                          children: movie.genres
-                              .map(
-                                (genero) => Text(
-                                  genero == movie.genres.last
-                                      ? genero
-                                      : "$genero - ",
-                                  style: GoogleFonts.montserrat(
-                                    fontWeight: FontWeight.w400,
-                                    color: Colors.white,
-                                    fontSize: 10.0,
-                                  ),
-                                ),
-                              )
-                              .toList(),
+                        Wrap(
+                          direction: Axis.horizontal,
+                          children: [
+                            Row(
+                              children: movie.genres
+                                  .map((genero) => FutureBuilder<Genre>(
+                                        future: genero,
+                                        builder: (context, snapshot) {
+                                          if (snapshot.hasData) {
+                                            final genre = snapshot.data!;
+                                            return Text(
+                                              genre == movie.genres.last
+                                                  ? genre.getGenre()
+                                                  : "${genre.getGenre()} - ",
+                                              style: GoogleFonts.montserrat(
+                                                fontWeight: FontWeight.w400,
+                                                color: Colors.white,
+                                                fontSize: 10.0,
+                                              ),
+                                            );
+                                          } else if (snapshot.hasError) {
+                                            return const Text(
+                                                "Erro ao carregar genero");
+                                          } else {
+                                            return const Text("Carregando...");
+                                          }
+                                        },
+                                      ))
+                                  .toList(),
+                            ),
+                          ],
                         )
                       ],
                     ),
