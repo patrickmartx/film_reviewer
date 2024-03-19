@@ -1,5 +1,5 @@
-import 'package:film_reviewer/pages/HomePage.dart';
-import 'package:film_reviewer/pages/MoviesListPage.dart';
+import 'package:film_reviewer/src/pages/HomePage.dart';
+import 'package:film_reviewer/src/pages/MoviesListPage.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -19,7 +19,7 @@ class FilmReviewer extends StatelessWidget {
         // fontFamily: GoogleFonts.montserrat.toString(),
         useMaterial3: true,
       ),
-      home: MovieListPage(),
+      home: HomePage(),
     );
   }
 }
