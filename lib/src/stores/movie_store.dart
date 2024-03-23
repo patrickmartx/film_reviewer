@@ -1,6 +1,6 @@
-import 'package:film_reviewer/src/data/http/Exceptions.dart';
-import 'package:film_reviewer/src/data/model/entity/Movie.dart';
-import 'package:film_reviewer/src/data/repositories/MovieRepository.dart';
+import 'package:film_reviewer/src/data/http/exceptions.dart';
+import 'package:film_reviewer/src/data/model/entity/movie.dart';
+import 'package:film_reviewer/src/data/repositories/movie_repository.dart';
 import 'package:flutter/cupertino.dart';
 
 class MovieDetailsStore {

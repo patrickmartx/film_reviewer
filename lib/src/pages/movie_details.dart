@@ -1,7 +1,7 @@
-import 'package:film_reviewer/src/data/http/HttpClient.dart';
-import 'package:film_reviewer/src/data/http/Routes.dart';
-import 'package:film_reviewer/src/data/repositories/MovieRepository.dart';
-import 'package:film_reviewer/src/stores/MovieStore.dart';
+import 'package:film_reviewer/src/data/http/http_client.dart';
+import 'package:film_reviewer/src/data/http/routes.dart';
+import 'package:film_reviewer/src/data/repositories/movie_repository.dart';
+import 'package:film_reviewer/src/stores/movie_store.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -37,19 +37,17 @@ class _MovieDetailsState extends State<MovieDetails> {
           ]),
           builder: (context, child) {
             if (store.isLoading.value) {
-              return const CircularProgressIndicator();
+              return const Center(child: CircularProgressIndicator());
             }
 
             if (store.erro.value.isNotEmpty) {
               return Center(
                 child: Text(store.erro.value),
               );
-            }
-
-            else {
+            } else {
               return ListView(
                 children: [
-                  BackBox(),
+                  const BackBox(),
                   Padding(
                     padding: const EdgeInsets.only(top: 50),
                     child: Column(
@@ -61,7 +59,8 @@ class _MovieDetailsState extends State<MovieDetails> {
                           child: ClipRRect(
                               borderRadius: BorderRadius.circular(10.0),
                               child: Image.network(
-                                Routes().routePoster(store.movie.value!.posterPath),
+                                Routes()
+                                    .routePoster(store.movie.value!.posterPath),
                                 fit: BoxFit.fill,
                               )),
                         ),
@@ -70,7 +69,8 @@ class _MovieDetailsState extends State<MovieDetails> {
                           text: TextSpan(
                             children: [
                               TextSpan(
-                                text: "${store.movie.value!.voteAverage}",
+                                text: formatAverage(
+                                    store.movie.value!.voteAverage),
                                 style: GoogleFonts.montserrat(
                                   fontWeight: FontWeight.w600,
                                   fontSize: 24.0,
@@ -113,7 +113,8 @@ class _MovieDetailsState extends State<MovieDetails> {
                                     ),
                                   ),
                                   TextSpan(
-                                    text: " ${store.movie.value!.originalTitle}",
+                                    text:
+                                        " ${store.movie.value!.originalTitle}",
                                     style: GoogleFonts.montserrat(
                                       fontWeight: FontWeight.w500,
                                       fontSize: 10.0,
@@ -129,15 +130,15 @@ class _MovieDetailsState extends State<MovieDetails> {
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 GrayBoxInfo(
-                                    campoUm: "Ano",
-                                    campoDois:
-                                        "${store.movie.value!.releaseDate}"),
+                                    title: "Ano",
+                                    subtitle:
+                                        "${store.movie.value!.releaseDate.substring(0, 4)}"),
                                 const Padding(
                                     padding: EdgeInsets.only(left: 10)),
                                 GrayBoxInfo(
-                                    campoUm: "Duração",
-                                    campoDois: "${store.movie.value!.runtime.toString()}"
-                                    )
+                                    title: "Duração",
+                                    subtitle: formatRuntime(
+                                        store.movie.value!.runtime)),
                               ],
                             ),
                             const Padding(padding: EdgeInsets.only(top: 10)),
@@ -154,29 +155,31 @@ class _MovieDetailsState extends State<MovieDetails> {
                                   const Padding(
                                       padding: EdgeInsets.only(top: 60)),
                                   TextAndSubtextBox(
-                                      campoUm: "Descrição",
-                                      campoDois: [store.movie.value!.overview]),
+                                      title: "Descrição",
+                                      subtitles: [store.movie.value!.overview]),
                                   const Padding(
                                       padding: EdgeInsets.only(top: 60)),
                                   GrayBoxFixSizeInfo(
-                                      campoUm: "Orçamento",
-                                      campoDois:
-                                          ['\$ ${store.movie.value!.budget}']),
+                                      title: "Orçamento",
+                                      subtitles: [
+                                        '\$ ${formatBudget(store.movie.value!.budget)}'
+                                      ]),
                                   const Padding(
                                       padding: EdgeInsets.only(top: 5)),
                                   GrayBoxFixSizeInfo(
-                                      campoUm: "Produtoras",
-                                      campoDois: store.movie.value!.productionCompanies),
+                                      title: "Produtoras",
+                                      subtitles: store
+                                          .movie.value!.productionCompanies),
                                   const Padding(
                                       padding: EdgeInsets.only(top: 60)),
                                   TextAndSubtextBox(
-                                      campoUm: "Diretor",
-                                      campoDois: store.movie.value!.directors),
+                                      title: "Diretor",
+                                      subtitles: store.movie.value!.directors),
                                   const Padding(
                                       padding: EdgeInsets.only(top: 30)),
                                   TextAndSubtextBox(
-                                      campoUm: "Elenco",
-                                      campoDois: store.movie.value!.cast),
+                                      title: "Elenco",
+                                      subtitles: store.movie.value!.cast),
                                 ],
                               ),
                             ),
@@ -235,9 +238,9 @@ class BackBox extends StatelessWidget {
 
 class GrayBoxInfo extends StatelessWidget {
   const GrayBoxInfo(
-      {super.key, required this.campoUm, required this.campoDois});
-  final String campoUm;
-  final String campoDois;
+      {super.key, required this.title, required this.subtitle});
+  final String title;
+  final String subtitle;
 
   @override
   Widget build(BuildContext context) {
@@ -253,7 +256,7 @@ class GrayBoxInfo extends StatelessWidget {
           text: TextSpan(
             children: [
               TextSpan(
-                text: "$campoUm:",
+                text: "$title:",
                 style: GoogleFonts.montserrat(
                   fontWeight: FontWeight.w600,
                   fontSize: 12.0,
@@ -261,7 +264,7 @@ class GrayBoxInfo extends StatelessWidget {
                 ),
               ),
               TextSpan(
-                text: " $campoDois",
+                text: " $subtitle",
                 style: GoogleFonts.montserrat(
                   fontWeight: FontWeight.w600,
                   fontSize: 14.0,
@@ -278,9 +281,9 @@ class GrayBoxInfo extends StatelessWidget {
 
 class GrayBoxFixSizeInfo extends StatelessWidget {
   const GrayBoxFixSizeInfo(
-      {super.key, required this.campoUm, required this.campoDois});
-  final String campoUm;
-  final List<String> campoDois;
+      {super.key, required this.title, required this.subtitles});
+  final String title;
+  final List<String> subtitles;
 
   @override
   Widget build(BuildContext context) {
@@ -298,7 +301,7 @@ class GrayBoxFixSizeInfo extends StatelessWidget {
           text: TextSpan(
             children: [
               TextSpan(
-                text: "${campoUm.toUpperCase()}:",
+                text: "${title.toUpperCase()}:",
                 style: GoogleFonts.montserrat(
                   fontWeight: FontWeight.w600,
                   fontSize: 12.0,
@@ -306,7 +309,7 @@ class GrayBoxFixSizeInfo extends StatelessWidget {
                 ),
               ),
               TextSpan(
-                text: " ${campoDois.join(", ")}",
+                text: " ${subtitles.join(", ")}",
                 style: GoogleFonts.montserrat(
                   fontWeight: FontWeight.w600,
                   fontSize: 14.0,
@@ -351,9 +354,9 @@ class WhiteBoxInfo extends StatelessWidget {
 
 class TextAndSubtextBox extends StatelessWidget {
   const TextAndSubtextBox(
-      {super.key, required this.campoUm, required this.campoDois});
-  final String campoUm;
-  final List<String> campoDois;
+      {super.key, required this.title, required this.subtitles});
+  final String title;
+  final List<String> subtitles;
 
   @override
   Widget build(BuildContext context) {
@@ -363,7 +366,7 @@ class TextAndSubtextBox extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            campoUm,
+            title,
             style: GoogleFonts.montserrat(
               fontWeight: FontWeight.w400,
               fontSize: 14.0,
@@ -372,7 +375,7 @@ class TextAndSubtextBox extends StatelessWidget {
           ),
           const Padding(padding: EdgeInsets.only(top: 10)),
           Text(
-            campoDois.join(", "),
+            subtitles.join(", "),
             style: GoogleFonts.montserrat(
               fontWeight: FontWeight.w600,
               fontSize: 12.0,
@@ -383,4 +386,47 @@ class TextAndSubtextBox extends StatelessWidget {
       ),
     );
   }
+}
+
+String formatAverage(double number) {
+  String numberString = number.toString();
+  List<String> parts = numberString.split('.');
+
+  if (parts.length > 1) {
+    String decimalPart = parts[1].substring(0, 1);
+    return '${parts[0]}.${decimalPart}';
+  } else {
+    return parts[0];
+  }
+}
+
+String formatRuntime(int minutes) {
+  if (minutes < 0) {
+    return "Invalid";
+  }
+
+  int hours = minutes ~/ 60;
+  int remainingMinutes = minutes % 60;
+
+  if (hours == 0) {
+    return "$remainingMinutes min";
+  } else if (remainingMinutes == 0) {
+    return "$hours h";
+  } else {
+    return "$hours h $remainingMinutes min";
+  }
+}
+
+String formatBudget(int budget) {
+  String budgetString = budget.toString();
+  String formattedBudget = '';
+
+  for (int i = budgetString.length - 1, count = 0; i >= 0; i--, count++) {
+    formattedBudget = budgetString[i] + formattedBudget;
+    if (count % 3 == 2 && i > 0) {
+      formattedBudget = ',' + formattedBudget;
+    }
+  }
+
+  return formattedBudget;
 }

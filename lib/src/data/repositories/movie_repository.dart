@@ -1,14 +1,13 @@
 import 'dart:convert';
-import 'dart:io';
 
-import 'package:film_reviewer/src/data/http/Exceptions.dart';
-import 'package:film_reviewer/src/data/http/Routes.dart';
-import 'package:film_reviewer/src/data/http/HttpClient.dart';
-import 'package:film_reviewer/src/data/model/entity/Movie.dart';
-import 'package:film_reviewer/src/data/model/entity/MovieHomeDTO.dart';
+import 'package:film_reviewer/src/data/http/exceptions.dart';
+import 'package:film_reviewer/src/data/http/http_client.dart';
+import 'package:film_reviewer/src/data/http/routes.dart';
+import 'package:film_reviewer/src/data/model/entity/movie.dart';
+import 'package:film_reviewer/src/data/model/entity/movie_home_DTO.dart';
 
 abstract class MovieRepository {
-  Future<List<MovieHomeDTO>> getMovies();
+  Future<List<MovieHomeDTO>> getMovies(int idGenre);
   Future<Movie> getMovieDetailsById(int id);
 }
 
@@ -17,9 +16,11 @@ class MovieRepositoryImpl implements MovieRepository {
 
   MovieRepositoryImpl({required this.client});
 
+
+
   @override
-  Future<List<MovieHomeDTO>> getMovies() async {
-    final response = await client.get(url: Routes().routeMovieList());
+  Future<List<MovieHomeDTO>> getMovies(int idGenre) async {
+    final response = await client.get(url: Routes().routeMovieList(idGenre));
 
     if (response.statusCode == 200) {
       final List<MovieHomeDTO> movieList = [];

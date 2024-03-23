@@ -1,6 +1,7 @@
-import 'package:film_reviewer/src/data/http/Exceptions.dart';
-import 'package:film_reviewer/src/data/model/entity/MovieHomeDTO.dart';
-import 'package:film_reviewer/src/data/repositories/MovieRepository.dart';
+import 'package:film_reviewer/src/data/http/exceptions.dart';
+import 'package:film_reviewer/src/data/model/entity/genre.dart';
+import 'package:film_reviewer/src/data/model/entity/movie_home_DTO.dart';
+import 'package:film_reviewer/src/data/repositories/movie_repository.dart';
 import 'package:flutter/cupertino.dart';
 
 class MovieHomeDTOStore {
@@ -14,11 +15,10 @@ class MovieHomeDTOStore {
 
   MovieHomeDTOStore({required this.repository});
 
-  Future getMovies() async {
+  Future getMoviesTwo(int idGenre) async {
     isLoading.value = true;
-
     try {
-      final result = await repository.getMovies();
+      final result = await repository.getMovies(idGenre);
       state.value = result;
     } on NotFoundException catch (e) {
       erro.value = e.message;
@@ -30,3 +30,5 @@ class MovieHomeDTOStore {
     isLoading.value = false;
   }
 }
+
+

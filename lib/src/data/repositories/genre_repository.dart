@@ -1,10 +1,9 @@
 import 'dart:convert';
-import 'dart:ffi';
 
-import 'package:film_reviewer/src/data/http/Exceptions.dart';
-import 'package:film_reviewer/src/data/http/HttpClient.dart';
-import 'package:film_reviewer/src/data/http/Routes.dart';
-import 'package:film_reviewer/src/data/model/entity/Genre.dart';
+import 'package:film_reviewer/src/data/http/exceptions.dart';
+import 'package:film_reviewer/src/data/http/http_client.dart';
+import 'package:film_reviewer/src/data/http/routes.dart';
+import 'package:film_reviewer/src/data/model/entity/genre.dart';
 
 abstract class GenreRepository {
   Future<List<Genre>> getGenres();
@@ -25,7 +24,7 @@ class GenreRepositoryImpl implements GenreRepository {
 
       final body = jsonDecode(response.body);
 
-      body['results'].map((content) {
+      body['genres'].map((content) {
         final Genre genre = Genre.fromMap(content);
         genres.add(genre);
       }).toList();

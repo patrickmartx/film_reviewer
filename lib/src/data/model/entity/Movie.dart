@@ -1,6 +1,4 @@
-import 'package:film_reviewer/src/data/http/HttpClient.dart';
-import 'package:film_reviewer/src/data/model/entity/Genre.dart';
-import 'package:film_reviewer/src/data/repositories/GenreRepository.dart';
+
 
 class Movie {
   final int budget;
@@ -35,12 +33,10 @@ class Movie {
       required this.directors});
 
   int getId() {
-    return this.id;
+    return id;
   }
 
   factory Movie.fromMap(Map<String, dynamic> map) {
-    GenreRepositoryImpl repository =
-        GenreRepositoryImpl(client: HttpClientImpl());
     final List castName = map['cast']
         .where((person) => person['known_for_department'] == 'Acting')
         .map((person) => person['name'])

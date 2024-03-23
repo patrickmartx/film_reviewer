@@ -1,4 +1,4 @@
-import 'dart:ffi';
+
 
 class Genre {
   final int id;
@@ -11,6 +11,6 @@ class Genre {
   }
 
   String getGenre() {
-    return this.genreName;
+    return genreName;
   }
 }

@@ -1,6 +1,6 @@
-import 'package:film_reviewer/src/data/http/Exceptions.dart';
-import 'package:film_reviewer/src/data/model/entity/Genre.dart';
-import 'package:film_reviewer/src/data/repositories/GenreRepository.dart';
+import 'package:film_reviewer/src/data/http/exceptions.dart';
+import 'package:film_reviewer/src/data/model/entity/genre.dart';
+import 'package:film_reviewer/src/data/repositories/genre_repository.dart';
 import 'package:flutter/cupertino.dart';
 
 class GenreStore {
@@ -14,7 +14,7 @@ class GenreStore {
 
   GenreStore({required this.repository});
 
-  Future getMovies() async {
+  Future getGenres() async {
     isLoading.value = true;
 
     try {

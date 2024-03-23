@@ -1,7 +1,5 @@
-import 'package:film_reviewer/src/pages/HomePage.dart';
-import 'package:film_reviewer/src/pages/MoviesListPage.dart';
+import 'package:film_reviewer/src/pages/home_page.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 void main() {
   runApp(const FilmReviewer());
@@ -15,8 +13,7 @@ class FilmReviewer extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Color.fromRGBO(52, 58, 64, 1)),
-        // fontFamily: GoogleFonts.montserrat.toString(),
+        colorScheme: ColorScheme.fromSeed(seedColor: const Color.fromRGBO(52, 58, 64, 1)),
         useMaterial3: true,
       ),
       home: HomePage(),

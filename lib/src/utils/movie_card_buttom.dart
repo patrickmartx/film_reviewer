@@ -1,19 +1,24 @@
-import 'package:film_reviewer/src/data/http/HttpClient.dart';
-import 'package:film_reviewer/src/data/http/Routes.dart';
-import 'package:film_reviewer/src/data/model/entity/Genre.dart';
-import 'package:film_reviewer/src/data/model/entity/MovieHomeDTO.dart';
-import 'package:film_reviewer/src/data/repositories/MovieRepository.dart';
-import 'package:film_reviewer/src/pages/MovieDetails.dart';
+import 'package:film_reviewer/src/data/http/routes.dart';
+import 'package:film_reviewer/src/data/model/entity/genre.dart';
+import 'package:film_reviewer/src/data/model/entity/movie_home_DTO.dart';
+import 'package:film_reviewer/src/pages/movie_details.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class MovieCardButtom extends StatelessWidget {
-  const MovieCardButtom({super.key, required this.movie});
+  const MovieCardButtom({
+    Key? key,
+    required this.movie,
+    required this.genres,
+  }) : super(key: key);
+
   final MovieHomeDTO movie;
+  final List<Genre> genres;
 
   @override
   Widget build(BuildContext context) {
-    MovieRepository repository = MovieRepositoryImpl(client: HttpClientImpl());
+    List<String> genreNames = _getGenreNames();
+
     return GestureDetector(
       onTap: () {
         Navigator.push(
@@ -80,38 +85,20 @@ class MovieCardButtom extends StatelessWidget {
                           ),
                         ),
                         const SizedBox(height: 10.0),
-                        Wrap(
-                          direction: Axis.horizontal,
-                          children: [
-                            Row(
-                              children: movie.genres
-                                  .map((genero) => FutureBuilder<Genre>(
-                                        future: genero,
-                                        builder: (context, snapshot) {
-                                          if (snapshot.hasData) {
-                                            final genre = snapshot.data!;
-                                            return Text(
-                                              genre == movie.genres.last
-                                                  ? genre.getGenre()
-                                                  : "${genre.getGenre()} - ",
-                                              style: GoogleFonts.montserrat(
-                                                fontWeight: FontWeight.w400,
-                                                color: Colors.white,
-                                                fontSize: 10.0,
-                                              ),
-                                            );
-                                          } else if (snapshot.hasError) {
-                                            return const Text(
-                                                "Erro ao carregar genero");
-                                          } else {
-                                            return const Text("Carregando...");
-                                          }
-                                        },
-                                      ))
-                                  .toList(),
+                        ConstrainedBox(
+                          constraints: BoxConstraints(
+                            maxWidth: 250.0,
+                          ),
+                          child: Text(
+                            genreNames.join(
+                                ' - '),
+                            style: GoogleFonts.montserrat(
+                              fontWeight: FontWeight.w400,
+                              color: Colors.white,
+                              fontSize: 10.0,
                             ),
-                          ],
-                        )
+                          ),
+                        ),
                       ],
                     ),
                   ),
@@ -122,5 +109,13 @@ class MovieCardButtom extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  List<String> _getGenreNames() {
+    return movie.genresID.map((genreId) {
+      final genre = genres.firstWhere((genre) => genre.id == genreId,
+          orElse: () => Genre(id: genreId, genreName: 'Unknown'));
+      return genre.genreName;
+    }).toList();
   }
 }
